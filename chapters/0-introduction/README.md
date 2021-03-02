@@ -2,6 +2,8 @@ The introduction contains one assignment, which is just to show that I can write
 
 ## Assignment
 
+All required libraries and a barebones IDEA project are in the `hello` directory.
+
 This assignment is optional. Its main purpose is to ensure that you can write simple Java programs; use algs4.jar; and submit the assignment.
 
 #### Specification
