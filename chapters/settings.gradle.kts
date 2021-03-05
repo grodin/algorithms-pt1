@@ -7,3 +7,7 @@ include(
 include(
   ":1-union-find:percolation"
 )
+
+include(
+  ":2-queues:deques-randomized-queues"
+)
