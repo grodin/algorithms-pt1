@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Test;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,5 +46,40 @@ class DequeTest {
     });
   }
 
+  @Test
+  void dequeIteratorThrowsNoSuchElementExceptionWhenNoMoreElements() {
+    Deque<Integer> intDeque = new Deque<>();
+    for (int i = 0; i < 2; i++) {
+      intDeque.addLast(i);
+    }
+    Iterator<Integer> iterator = intDeque.iterator();
 
+    iterator.next();
+    iterator.next();
+
+    assertThrows(NoSuchElementException.class, () -> iterator.next());
+  }
+
+  @Test
+  void interleavedAddsWorkCorrectly() {
+    Deque<Integer> intDeque = new Deque<>();
+    intDeque.addFirst(0);
+    intDeque.addLast(1);
+    intDeque.addFirst(-1);
+    intDeque.addLast(2);
+
+    assertIterableEquals(List.of(-1, 0, 1, 2), intDeque);
+  }
+
+  @Test
+  void dequeIteratorCorrectlyIterates() {
+    Deque<Integer> intDeque = new Deque<>();
+    for (int i = 0; i < 4; i++) {
+      intDeque.addLast(i);
+    }
+
+    Iterable<Integer> expected = List.of(0, 1, 2, 3);
+
+    assertIterableEquals(expected, intDeque);
+  }
 }

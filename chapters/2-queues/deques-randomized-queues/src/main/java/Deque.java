@@ -1,5 +1,9 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import edu.princeton.cs.algs4.StdOut;
 
 public class Deque<E> implements Iterable<E> {
 
@@ -21,7 +25,7 @@ public class Deque<E> implements Iterable<E> {
     Cell<E> newHead = new Cell<>(item, null, head);
     Cell<E> oldHead = head;
     head = newHead;
-    if (size() > 1) {
+    if (size() > 0) {
       assert oldHead != null;
       assert oldHead.previous == null;
       oldHead.previous = newHead;
@@ -37,7 +41,7 @@ public class Deque<E> implements Iterable<E> {
     Cell<E> newTail = new Cell<>(item, tail, null);
     Cell<E> oldTail = tail;
     tail = newTail;
-    if (size() > 1) {
+    if (size() > 0) {
       assert oldTail != null;
       assert oldTail.next == null;
       oldTail.next = newTail;
@@ -80,7 +84,28 @@ public class Deque<E> implements Iterable<E> {
   }
 
   public static void main(String[] args) {
+    Deque<Integer> deque = new Deque<>();
 
+    StdOut.println("Newly created Deque size: " + deque.size());
+
+    deque.addFirst(0);
+    deque.addLast(1);
+    deque.addLast(2);
+    deque.addFirst(-1);
+
+    StdOut.println("Deque now has size: " + deque.size());
+    StdOut.println("Deque is empty? " + deque.isEmpty());
+    StdOut.println("Deque contains " +
+        StreamSupport.stream(deque.spliterator(), false)
+            .<String>map(Object::toString)
+            .collect(Collectors.joining(", ")));
+
+    StdOut.println("Deque last element was: " + deque.removeLast());
+    StdOut.println("Deque first element was: " + deque.removeFirst());
+
+    StdOut.println("Iterating Deque...");
+    deque.iterator().forEachRemaining((i) -> StdOut.println(i));
+    StdOut.println("Done");
   }
 
   private class DequeIterator implements Iterator<E> {
@@ -88,7 +113,7 @@ public class Deque<E> implements Iterable<E> {
     private Cell<E> current = head;
 
     @Override public boolean hasNext() {
-      return current != null && current.next != null;
+      return current != null;
     }
 
     @Override public E next() {
