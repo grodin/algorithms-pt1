@@ -4,8 +4,8 @@ import edu.princeton.cs.algs4.StdRandom;
 
 public class RandomWord {
   public static void main(String[] args) {
-    String champion = StdIn.readString();
-    int index = 1;
+    String champion = "";
+    int index = 0;
     while (!StdIn.isEmpty()) {
       String nextInput = StdIn.readString();
       double p = 1.0 / ++index;

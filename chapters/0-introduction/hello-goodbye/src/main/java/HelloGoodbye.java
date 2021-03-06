@@ -10,11 +10,12 @@ public class HelloGoodbye {
   public static void main(String[] args) {
     if (args.length < 2) {
       System.err.println("Needs at least two arguments");
-      System.exit(1);
+    } else {
+      String name1 = args[0]; // In Java args[0] does NOT contain the program
+      // name
+      String name2 = args[1];
+      StdOut.println("Hello " + name1 + " and " + name2 + ".");
+      StdOut.println("Goodbye " + name2 + " and " + name1 + ".");
     }
-    String name1 = args[0]; // In Java args[0] does NOT contain the program name
-    String name2 = args[1];
-    StdOut.println("Hello " + name1 + " and " + name2 + ".");
-    StdOut.println("Goodbye " + name2 + " and " + name1 + ".");
   }
 }
