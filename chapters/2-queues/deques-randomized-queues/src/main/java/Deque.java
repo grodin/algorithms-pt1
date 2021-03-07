@@ -1,14 +1,12 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import edu.princeton.cs.algs4.StdOut;
 
-public class Deque<E> implements Iterable<E> {
+public class Deque<Item> implements Iterable<Item> {
 
-  private Cell<E> head = null;
-  private Cell<E> tail = null;
+  private Cell<Item> head = null;
+  private Cell<Item> tail = null;
   private int size = 0;
 
   public boolean isEmpty() {
@@ -19,11 +17,11 @@ public class Deque<E> implements Iterable<E> {
     return size;
   }
 
-  public void addFirst(E item) {
+  public void addFirst(Item item) {
     if (item == null)
       throw new IllegalArgumentException("Item must be non-null");
-    Cell<E> newHead = new Cell<>(item, null, head);
-    Cell<E> oldHead = head;
+    Cell<Item> newHead = new Cell<>(item, null, head);
+    Cell<Item> oldHead = head;
     head = newHead;
     if (size() > 0) {
       assert oldHead != null;
@@ -35,11 +33,11 @@ public class Deque<E> implements Iterable<E> {
     size += 1;
   }
 
-  public void addLast(E item) {
+  public void addLast(Item item) {
     if (item == null)
       throw new IllegalArgumentException("Item must be non-null");
-    Cell<E> newTail = new Cell<>(item, tail, null);
-    Cell<E> oldTail = tail;
+    Cell<Item> newTail = new Cell<>(item, tail, null);
+    Cell<Item> oldTail = tail;
     tail = newTail;
     if (size() > 0) {
       assert oldTail != null;
@@ -51,9 +49,9 @@ public class Deque<E> implements Iterable<E> {
     size += 1;
   }
 
-  public E removeFirst() {
+  public Item removeFirst() {
     if (size() < 1) throw new NoSuchElementException("Deque is empty");
-    E value = head.value;
+    Item value = head.value;
     head = head.next;
     if (size() > 1) {
       assert head != null;
@@ -65,9 +63,9 @@ public class Deque<E> implements Iterable<E> {
     return value;
   }
 
-  public E removeLast() {
+  public Item removeLast() {
     if (size() < 1) throw new NoSuchElementException("Deque is empty");
-    E value = tail.value;
+    Item value = tail.value;
     tail = tail.previous;
     if (size() > 1) {
       assert tail != null;
@@ -79,7 +77,7 @@ public class Deque<E> implements Iterable<E> {
     return value;
   }
 
-  @Override public Iterator<E> iterator() {
+  @Override public Iterator<Item> iterator() {
     return new DequeIterator();
   }
 
@@ -95,10 +93,8 @@ public class Deque<E> implements Iterable<E> {
 
     StdOut.println("Deque now has size: " + deque.size());
     StdOut.println("Deque is empty? " + deque.isEmpty());
-    StdOut.println("Deque contains " +
-        StreamSupport.stream(deque.spliterator(), false)
-            .<String>map(Object::toString)
-            .collect(Collectors.joining(", ")));
+    StdOut.print("Deque contains :");
+    deque.iterator().forEachRemaining((i) -> StdOut.println(i));
 
     StdOut.println("Deque last element was: " + deque.removeLast());
     StdOut.println("Deque first element was: " + deque.removeFirst());
@@ -108,19 +104,19 @@ public class Deque<E> implements Iterable<E> {
     StdOut.println("Done");
   }
 
-  private class DequeIterator implements Iterator<E> {
+  private class DequeIterator implements Iterator<Item> {
 
-    private Cell<E> current = head;
+    private Cell<Item> current = head;
 
     @Override public boolean hasNext() {
       return current != null;
     }
 
-    @Override public E next() {
+    @Override public Item next() {
       if (!hasNext()) {
         throw new NoSuchElementException();
       }
-      E value = current.value;
+      Item value = current.value;
       current = current.next;
       return value;
     }
@@ -130,7 +126,7 @@ public class Deque<E> implements Iterable<E> {
     }
   }
 
-  static class Cell<I> {
+  private static class Cell<I> {
     final I value;
     Cell<I> previous;
     Cell<I> next;
