@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.StringJoiner;
 
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
@@ -128,10 +126,10 @@ public class Percolation {
     }
 
     @Override public String toString() {
-      return new StringJoiner(", ", Coord.class.getSimpleName() + "[", "]")
-          .add("row=" + row)
-          .add("col=" + col)
-          .toString();
+      return "Coord{" +
+          "row=" + row +
+          ", col=" + col +
+          '}';
     }
 
     @Override public boolean equals(final Object o) {
@@ -142,7 +140,10 @@ public class Percolation {
     }
 
     @Override public int hashCode() {
-      return Objects.hash(row, col);
+      int result = 1;
+      result = 31 * result + Integer.hashCode(row);
+      result = 31 * result + Integer.hashCode(col);
+      return result;
     }
   }
 }
