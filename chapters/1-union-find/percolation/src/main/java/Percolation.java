@@ -1,11 +1,10 @@
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 
-  private enum SiteState {CLOSED, OPEN}
+  private enum SiteState {
+    CLOSED, OPEN
+  }
 
   private final int size;
   private int openSiteCount = 0;
@@ -15,6 +14,7 @@ public class Percolation {
   private final int bottom; // virtual bottom site
 
   public Percolation(int n) {
+    check(n > 0, "N must be positive");
     size = n;
     sites = new SiteState[size][size];
 
@@ -24,10 +24,10 @@ public class Percolation {
     bottom = top + 1;
 
     for (int i = 0; i < size; i++) {
-      //connect top row to virtual top site
+      // connect top row to virtual top site
       siteConnections.union(top, i);
 
-      //connect bottom row to virtual bottom site
+      // connect bottom row to virtual bottom site
       siteConnections.union(bottom, totalSites - i - 1);
     }
   }
@@ -43,9 +43,9 @@ public class Percolation {
 
     // Connect to open neighbours
     for (Coord neighbour : neighbours(row, col, size)) {
-      if (isOpen(neighbour.row, neighbour.col)) {
-        final int neighbourIndex = coordsToIndex(neighbour.row, neighbour.col
-            , size);
+      if (neighbour != null && isOpen(neighbour.row, neighbour.col)) {
+        final int neighbourIndex =
+            coordsToIndex(neighbour.row, neighbour.col, size);
         siteConnections.union(indexOfSiteToOpen, neighbourIndex);
       }
     }
@@ -58,8 +58,16 @@ public class Percolation {
 
   public boolean isFull(int row, int col) {
     checkRowAndColBounds(row, col);
-    return isOpen(row, col) &&
-        siteConnections.connected(top, coordsToIndex(row, col, size));
+    final int indexToCheck = coordsToIndex(row, col, size);
+    boolean isFull = false;
+    for (int i = 1; i <= size; i++) {
+      isFull = isFull || connected(indexToCheck, coordsToIndex(1, i, size));
+    }
+    return isOpen(row, col) && isFull;
+  }
+
+  private boolean connected(int site, int otherSite) {
+    return siteConnections.find(site) == siteConnections.find(otherSite);
   }
 
   public int numberOfOpenSites() {
@@ -67,56 +75,53 @@ public class Percolation {
   }
 
   public boolean percolates() {
-    return siteConnections.connected(top, bottom);
+    return connected(top, bottom);
   }
 
   private void checkRowAndColBounds(final int row, final int col) {
     checkRowAndColBounds(row, col, size);
   }
 
-  static List<Coord> neighbours(final int row, final int col, final int size) {
+  private static Coord[] neighbours(final int row, final int col,
+                                    final int size) {
     checkRowAndColBounds(row, col, size);
-    final List<Coord> neighbours = new ArrayList<>(4);
+    final Coord[] neighbours = new Coord[4];
     if (col > 1) {
-      neighbours.add(new Coord(row, col - 1)); // Left neighbour
+      neighbours[0] = new Coord(row, col - 1); // Left neighbour
     }
     if (col < size) {
-      neighbours.add(new Coord(row, col + 1)); // Right neighbour
+      neighbours[1] = (new Coord(row, col + 1)); // Right neighbour
     }
     if (row > 1) {
-      neighbours.add(new Coord(row - 1, col)); // Top neighbour
+      neighbours[2] = (new Coord(row - 1, col)); // Top neighbour
     }
     if (row < size) {
-      neighbours.add(new Coord(row + 1, col)); // Bottom neighbour
+      neighbours[3] = (new Coord(row + 1, col)); // Bottom neighbour
     }
     return neighbours;
   }
 
-  static void checkRowAndColBounds(final int row, final int col,
-                                   final int size) {
-    check(1 <= row && row <= size, "Row must be between 1 and " + size);
-    check(1 <= col && col <= size, "Col must be between 1 and " + size);
+  private static void checkRowAndColBounds(final int row, final int col,
+                                           final int size) {
+    Percolation.check(1 <= row && row <= size,
+        "Row must be between 1 and " + size);
+    Percolation.check(1 <= col && col <= size,
+        "Col must be between 1 and " + size);
   }
 
-  static int coordsToIndex(final int row, final int col, final int size) {
+  private static int coordsToIndex(final int row, final int col,
+                                   final int size) {
     checkRowAndColBounds(row, col, size);
     return (row - 1) * size + col - 1;
   }
 
-  static Coord indexToCoords(final int index, final int size) {
-    check(index >= 0 && index < size * size, "Index not within bounds");
-    final int row = (index / size) + 1;
-    final int col = (index % size) + 1;
-    return new Coord(row, col);
-  }
-
-  static void check(boolean test, String message) {
+  private static void check(boolean test, String message) {
     if (!test) {
       throw new IllegalArgumentException(message);
     }
   }
 
-  final static class Coord {
+  private static final class Coord {
     final int row;
     final int col;
 
@@ -132,10 +137,10 @@ public class Percolation {
           '}';
     }
 
-    @Override public boolean equals(final Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      final Coord coord = (Coord) o;
+    @Override public boolean equals(final Object other) {
+      if (this == other) return true;
+      if (other == null || getClass() != other.getClass()) return false;
+      final Coord coord = (Coord) other;
       return row == coord.row && col == coord.col;
     }
 
