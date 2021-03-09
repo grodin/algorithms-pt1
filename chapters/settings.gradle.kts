@@ -11,3 +11,7 @@ include(
 include(
   ":2-queues:deques-randomized-queues"
 )
+
+include(
+  ":3-sorting:collinear"
+)
