@@ -4,7 +4,7 @@ plugins {
 }
 
 application {
-//  mainClass.set("RandomWord")
+  mainClass.set("Client")
 }
 
 val run: JavaExec by tasks
