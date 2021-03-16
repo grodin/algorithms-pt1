@@ -15,3 +15,4 @@ include(
 include(
   ":3-sorting:collinear"
 )
+include("common")
