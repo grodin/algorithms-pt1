@@ -53,4 +53,34 @@ class BoardTest {
     assertEquals(10, board.manhattan());
   }
 
+  /*
+    The following board should have hamming() == 1
+    1  2
+    0  3
+  */
+  @Test
+  void hamming_returnsCorrectValueFor2x2() {
+    var board = board(
+        row(1, 2),
+        row(0, 3)
+    );
+    assertEquals(1, board.hamming());
+  }
+
+  /*
+    The following board should have hamming() == 5
+    8 1 3
+    4 0 2
+    7 6 5
+  */
+  @Test
+  void hamming_returnsCorrectValue3x3() {
+    var board = board(
+        row(8, 1, 3),
+        row(4, 0, 2),
+        row(7, 6, 5)
+    );
+    assertEquals(5, board.hamming());
+  }
+
 }

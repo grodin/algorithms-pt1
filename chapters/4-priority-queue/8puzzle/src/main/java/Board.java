@@ -7,11 +7,10 @@ public final class Board {
 
   private final Tile SPACE;
   private final Tile[][] tiles;
-  private final int dimension;
 
   public Board(final int[][] tiles) {
     assert tiles != null;
-    dimension = tiles.length;
+    final int dimension = tiles.length;
     assert 2 <= dimension && dimension < 128;
     for (var row : tiles) assert row.length == dimension;
 
@@ -52,7 +51,18 @@ public final class Board {
   }
 
   public int hamming() {
-    return Integer.MIN_VALUE;
+    var count = 0;
+    for (int row = 0; row < dimension(); row++) {
+      for (int col = 0; col < dimension(); col++) {
+        final Tile tile = tiles[row][col];
+        if (!tile.equals(SPACE)) {
+          if (tileManhattan(row, col) != 0) {
+            count += 1;
+          }
+        }
+      }
+    }
+    return count;
   }
 
   public int manhattan() {
@@ -84,7 +94,7 @@ public final class Board {
   }
 
   public boolean isGoal() {
-    return false;
+    return manhattan() == 0;
   }
 
   @Override public boolean equals(final Object o) {
