@@ -15,16 +15,20 @@ public final class Board {
     this(tiles, null);
   }
 
-  private Board(final Board board, final Coord tileToSwap) {
+  private Board(final Board board, final Coord tileToSwapWithSpace) {
+    this(board, tileToSwapWithSpace, board.coordsOf(board.SPACE));
+  }
+
+  private Board(final Board board, final Coord tile1, final Coord tile2) {
     tiles = Arrays.stream(board.tiles)
         .map(Tile[]::clone).toArray($ -> board.tiles.clone());
     SPACE = board.SPACE;
-    if (tileToSwap != null) {
-      exchange(tiles, tileToSwap, coordsOf(SPACE));
+    if (tile1 != null && tile2 != null) {
+      exchange(tiles, tile1, tile2);
     }
   }
 
-  private Board(final int[][] tiles, final Coord tileToSwap) {
+  private Board(final int[][] tiles, final Coord tileToSwapWithSpace) {
     assert tiles != null;
     final int dimension = tiles.length;
     assert 2 <= dimension && dimension < 128;
@@ -42,8 +46,8 @@ public final class Board {
       }
     }
 
-    if (tileToSwap != null) {
-      exchange(this.tiles, coordsOf(SPACE), tileToSwap);
+    if (tileToSwapWithSpace != null) {
+      exchange(this.tiles, coordsOf(SPACE), tileToSwapWithSpace);
     }
   }
 
@@ -104,7 +108,8 @@ public final class Board {
     return Math.abs(row - entryCoords.row) + Math.abs(col - entryCoords.col);
   }
 
-  private static Coord cooardsOfEntryOnGoalBoard(final int entry, final int dimension) {
+  private static Coord cooardsOfEntryOnGoalBoard(final int entry,
+                                                 final int dimension) {
     check(0 <= entry && entry < (dimension * dimension));
     return new Coord(entry / dimension, entry % dimension);
   }
@@ -128,16 +133,20 @@ public final class Board {
   }
 
   public Board twin() {
-    return null;
+    return new Board(this,
+        coordsOf(new Tile(0, 1)),
+        coordsOf(new Tile(1, 2))
+    );
   }
 
   public static void main(String[] args) {
 
   }
 
-  private <T> void exchange(final T[][] tiles, final Coord coordsOf,
-                            final Coord tileToSwap) {
-    exchange(tiles, coordsOf.row, coordsOf.col, tileToSwap.row, tileToSwap.col);
+  private <T> void exchange(final T[][] tiles,
+                            final Coord tile1,
+                            final Coord tile2) {
+    exchange(tiles, tile1.row, tile1.col, tile2.row, tile2.col);
   }
 
 

@@ -1,6 +1,5 @@
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -8,20 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BoardTest {
 
-  static int[] row(int... values) {
-    return values;
-  }
-
-  static Board board(int[]... rows) {
-    return new Board(rows);
-  }
-
   @Test
   void toString_returnsOutput() {
-    var board = board(
-        row(1, 2, 3),
-        row(4, 5, 6),
-        row(7, 8, 0)
+    var board = SliderTestUtils.board(
+        SliderTestUtils.row(1, 2, 3),
+        SliderTestUtils.row(4, 5, 6),
+        SliderTestUtils.row(7, 8, 0)
     );
     var expected = "3\n 1 2 3\n 4 5 6\n 7 8 0";
     assertEquals(expected, board.toString());
@@ -34,9 +25,9 @@ class BoardTest {
   */
   @Test
   void manhattan_returnsCorrectValueFor2x2() {
-    var board = board(
-        row(1, 2),
-        row(0, 3)
+    var board = SliderTestUtils.board(
+        SliderTestUtils.row(1, 2),
+        SliderTestUtils.row(0, 3)
     );
     assertEquals(1, board.manhattan());
   }
@@ -49,10 +40,10 @@ class BoardTest {
   */
   @Test
   void manhattan_returnsCorrectValue3x3() {
-    var board = board(
-        row(8, 1, 3),
-        row(4, 0, 2),
-        row(7, 6, 5)
+    var board = SliderTestUtils.board(
+        SliderTestUtils.row(8, 1, 3),
+        SliderTestUtils.row(4, 0, 2),
+        SliderTestUtils.row(7, 6, 5)
     );
     assertEquals(10, board.manhattan());
   }
@@ -64,9 +55,9 @@ class BoardTest {
   */
   @Test
   void hamming_returnsCorrectValueFor2x2() {
-    var board = board(
-        row(1, 2),
-        row(0, 3)
+    var board = SliderTestUtils.board(
+        SliderTestUtils.row(1, 2),
+        SliderTestUtils.row(0, 3)
     );
     assertEquals(1, board.hamming());
   }
@@ -79,18 +70,12 @@ class BoardTest {
   */
   @Test
   void hamming_returnsCorrectValue3x3() {
-    var board = board(
-        row(8, 1, 3),
-        row(4, 0, 2),
-        row(7, 6, 5)
+    var board = SliderTestUtils.board(
+        SliderTestUtils.row(8, 1, 3),
+        SliderTestUtils.row(4, 0, 2),
+        SliderTestUtils.row(7, 6, 5)
     );
     assertEquals(5, board.hamming());
-  }
-
-  static <T> List<T> collectToList(Iterable<T> iterable) {
-    var items = new ArrayList<T>();
-    iterable.forEach(items::add);
-    return items;
   }
 
   /*
@@ -101,31 +86,31 @@ class BoardTest {
   */
   @Test
   void neighborsIsCorrect4Neighbors() {
-    var board = board(
-        row(8, 1, 3),
-        row(4, 0, 2),
-        row(7, 6, 5)
+    var board = SliderTestUtils.board(
+        SliderTestUtils.row(8, 1, 3),
+        SliderTestUtils.row(4, 0, 2),
+        SliderTestUtils.row(7, 6, 5)
     );
-    var neighbors = collectToList(board.neighbors());
+    var neighbors = SliderTestUtils.collectToList(board.neighbors());
     var expected = List.of(
-        board(
-            row(8, 0, 3),
-            row(4, 1, 2),
-            row(7, 6, 5)
+        SliderTestUtils.board(
+            SliderTestUtils.row(8, 0, 3),
+            SliderTestUtils.row(4, 1, 2),
+            SliderTestUtils.row(7, 6, 5)
         ),
-        board(
-            row(8, 1, 3),
-            row(0, 4, 2),
-            row(7, 6, 5)
+        SliderTestUtils.board(
+            SliderTestUtils.row(8, 1, 3),
+            SliderTestUtils.row(0, 4, 2),
+            SliderTestUtils.row(7, 6, 5)
         ),
-        board(
-            row(8, 1, 3),
-            row(4, 2, 0),
-            row(7, 6, 5)
-        ),board(
-            row(8, 1, 3),
-            row(4, 6, 2),
-            row(7, 0, 5)
+        SliderTestUtils.board(
+            SliderTestUtils.row(8, 1, 3),
+            SliderTestUtils.row(4, 2, 0),
+            SliderTestUtils.row(7, 6, 5)
+        ), SliderTestUtils.board(
+            SliderTestUtils.row(8, 1, 3),
+            SliderTestUtils.row(4, 6, 2),
+            SliderTestUtils.row(7, 0, 5)
         )
     );
     assertThat(neighbors).containsExactlyElementsIn(expected);
@@ -139,27 +124,27 @@ class BoardTest {
   */
   @Test
   void neighborsIsCorrect3Neighbors() {
-    var board = board(
-        row(8, 1, 3),
-        row(0, 4, 2),
-        row(7, 6, 5)
+    var board = SliderTestUtils.board(
+        SliderTestUtils.row(8, 1, 3),
+        SliderTestUtils.row(0, 4, 2),
+        SliderTestUtils.row(7, 6, 5)
     );
-    var neighbors = collectToList(board.neighbors());
+    var neighbors = SliderTestUtils.collectToList(board.neighbors());
     var expected = List.of(
-        board(
-            row(0, 1, 3),
-            row(8, 4, 2),
-            row(7, 6, 5)
+        SliderTestUtils.board(
+            SliderTestUtils.row(0, 1, 3),
+            SliderTestUtils.row(8, 4, 2),
+            SliderTestUtils.row(7, 6, 5)
         ),
-        board(
-            row(8, 1, 3),
-            row(4, 0, 2),
-            row(7, 6, 5)
+        SliderTestUtils.board(
+            SliderTestUtils.row(8, 1, 3),
+            SliderTestUtils.row(4, 0, 2),
+            SliderTestUtils.row(7, 6, 5)
         ),
-        board(
-            row(8, 1, 3),
-            row(7, 4, 2),
-            row(0, 6, 5)
+        SliderTestUtils.board(
+            SliderTestUtils.row(8, 1, 3),
+            SliderTestUtils.row(7, 4, 2),
+            SliderTestUtils.row(0, 6, 5)
         )
     );
     assertThat(neighbors).containsExactlyElementsIn(expected);
@@ -173,26 +158,24 @@ class BoardTest {
   */
   @Test
   void neighborsIsCorrect2Neighbors() {
-    var board = board(
-        row(0, 1, 3),
-        row(8, 4, 2),
-        row(7, 6, 5)
+    var board = SliderTestUtils.board(
+        SliderTestUtils.row(0, 1, 3),
+        SliderTestUtils.row(8, 4, 2),
+        SliderTestUtils.row(7, 6, 5)
     );
-    var neighbors = collectToList(board.neighbors());
+    var neighbors = SliderTestUtils.collectToList(board.neighbors());
     var expected = List.of(
-        board(
-            row(8, 1, 3),
-            row(0, 4, 2),
-            row(7, 6, 5)
+        SliderTestUtils.board(
+            SliderTestUtils.row(8, 1, 3),
+            SliderTestUtils.row(0, 4, 2),
+            SliderTestUtils.row(7, 6, 5)
         ),
-        board(
-            row(1, 0, 3),
-            row(8, 4, 2),
-            row(7, 6, 5)
+        SliderTestUtils.board(
+            SliderTestUtils.row(1, 0, 3),
+            SliderTestUtils.row(8, 4, 2),
+            SliderTestUtils.row(7, 6, 5)
         )
     );
     assertThat(neighbors).containsExactlyElementsIn(expected);
   }
-
-
 }
