@@ -1,8 +1,8 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
@@ -10,54 +10,75 @@ import edu.princeton.cs.algs4.StdOut;
 
 public final class Solver {
 
-  private final Board initialBoard;
+  private SearchNode foundSearchNode;
+  private final boolean solvable;
 
   public Solver(final Board initialBoard) {
     if (initialBoard == null)
       throw new IllegalArgumentException("Board must be non-null");
-    this.initialBoard = initialBoard;
+
+    var minPriorityQueue = new MinPQ<>(Comparator.comparing(SearchNode::manhattanPriority));
+    minPriorityQueue.insert(new SearchNode(initialBoard, 0, null));
+
+    var twinPriorityQueue = new MinPQ<>(Comparator.comparing(SearchNode::manhattanPriority));
+    twinPriorityQueue.insert(new SearchNode(initialBoard.twin(), 0, null));
+
+    SearchNode currentNode;
+    SearchNode twinCurrentNode;
+    while (true) {//HORRIBLE!
+      currentNode = minPriorityQueue.delMin();
+      if (currentNode != null && currentNode.board.isGoal()) {
+        solvable = true;
+        foundSearchNode = currentNode;
+        return;
+      }
+      twinCurrentNode = twinPriorityQueue.delMin();
+      if (twinCurrentNode != null && twinCurrentNode.board.isGoal()) {
+        solvable = false;
+        return;
+      }
+
+      addNeighborsToQueue(minPriorityQueue, currentNode);
+      addNeighborsToQueue(twinPriorityQueue, twinCurrentNode);
+    }
   }
 
+  private static void addNeighborsToQueue(final MinPQ<SearchNode> priorityQueue, final SearchNode currentNode) {
+    for (var neighbor : Objects.requireNonNull(currentNode).board.neighbors()) {
+      if (currentNode.previousNode == null || !currentNode.previousNode.board.equals(neighbor)) {
+        priorityQueue.insert(new SearchNode(
+            neighbor, currentNode.movesToReachBoard + 1, currentNode
+        ));
+      }
+    }
+  }
+
+
   public boolean isSolvable() {
-    return moves() != -1;
+    return solvable;
   }
 
   public int moves() {
-    final List<Board> solution = listSolution();
-    if (solution == null) {
+    if (!isSolvable()) {
       return -1;
     } else {
-      return solution.size();
+      return (int) StreamSupport
+          .stream(solution().spliterator(), false)
+          .count() - 1;
     }
   }
 
   public Iterable<Board> solution() {
-    return listSolution();
-  }
-
-  /**
-   * @return null if initial board has no solution
-   */
-  private List<Board> listSolution() {
-    var solution = new ArrayList<SearchNode>();
-    var priorityQueue = new MinPQ<>(Comparator.comparing(SearchNode::hammingPriority));
-    final SearchNode initialNode = new SearchNode(initialBoard, 0, null);
-    priorityQueue.insert(initialNode);
-
-    SearchNode currentNode = initialNode;
-    while (!currentNode.board.isGoal()) {
-      currentNode = priorityQueue.delMin();
-      solution.add(currentNode);
-      for (var neighbor : currentNode.board.neighbors()) {
-        if (currentNode.previousNode == null || !currentNode.previousNode.board.equals(neighbor)) {
-          priorityQueue.insert(
-              new SearchNode(neighbor,
-                  currentNode.movesToReachBoard + 1,
-                  currentNode));
-        }
-      }
+    if (foundSearchNode == null)
+      return null;
+    var solutionBoards = new ArrayList<Board>();
+    var currentNode = foundSearchNode;
+    while (currentNode != null) {
+      solutionBoards.add(currentNode.board);
+      currentNode = currentNode.previousNode;
     }
-    return solution.stream().map(node -> node.board).collect(Collectors.toList());
+    Collections.reverse(solutionBoards);
+    return solutionBoards;
   }
 
   public static void main(String[] args) {
@@ -103,11 +124,11 @@ public final class Solver {
     }
 
     public int hammingPriority() {
-      return hamming;
+      return movesToReachBoard + hamming;
     }
 
     public int manhattanPriority() {
-      return manhattan;
+      return movesToReachBoard + manhattan;
     }
 
     @Override public boolean equals(final Object o) {
@@ -121,5 +142,14 @@ public final class Solver {
       return Objects.hash(board, movesToReachBoard, previousNode);
     }
 
+    @Override public String toString() {
+      return "SearchNode{" +
+          "board=" + board +
+          ", movesToReachBoard=" + movesToReachBoard +
+          ", previousNode=" + previousNode +
+          ", hamming=" + hamming +
+          '}';
+    }
   }
+
 }
