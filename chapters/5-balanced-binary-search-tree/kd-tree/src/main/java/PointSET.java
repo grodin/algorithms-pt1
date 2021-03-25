@@ -1,5 +1,4 @@
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -20,11 +19,11 @@ public class PointSET {
   }
 
   public void insert(Point2D p) {
-    points.add(Objects.requireNonNull(p));
+    points.add(requireNonNull(p));
   }
 
   public boolean contains(Point2D p) {
-    return points.contains(Objects.requireNonNull(p));
+    return points.contains(requireNonNull(p));
   }
 
   public void draw() {
@@ -34,18 +33,25 @@ public class PointSET {
   }
 
   public Iterable<Point2D> range(RectHV rect) {
-    Objects.requireNonNull(rect);
+    requireNonNull(rect);
     return points.stream()
         .filter(rect::contains)
         .collect(Collectors.toUnmodifiableList());
   }
 
   public Point2D nearest(Point2D p) {
-    Objects.requireNonNull(p);
+    requireNonNull(p);
     return points.stream()
         .min(Comparator.comparing(p::distanceTo))
         .orElse(null);
   }
 
   public static void main(String[] args) {}
+
+  private static <R> R requireNonNull(final R value) {
+    if (value == null) {
+      throw new IllegalArgumentException();
+    }
+    return value;
+  }
 }
